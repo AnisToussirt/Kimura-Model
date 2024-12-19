@@ -1,0 +1,77 @@
+import numpy as np
+from scipy.integrate import quad
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+def log_G(x, N, s, h):
+    """
+    Logarithme de la fonction G(x).
+    G(x) = exp(-4Nshx - 2Ns(1-2h)x^2).
+    """
+    return -4 * N * s * h * x - 2 * N * s * (1 - 2 * h) * x**2
+
+def log_sum_exp(log_vals):
+    """
+    Calcul de log-sum-exp pour éviter les underflows/explosions.
+    log-sum-exp = log(sum(exp(log_vals)))
+    """
+    max_log = np.max(log_vals)  # Trouve le maximum des valeurs logarithmiques
+    return max_log + np.log(np.sum(np.exp(log_vals - max_log)))
+
+def u_log(p, N, s, h, num_points=1000):
+    """
+    Calcul de u(p) en utilisant l'échelle logarithmique :
+    u(p) = (intégrale de G(x) de 0 à p) / (intégrale de G(x) de 0 à 1).
+    """
+    # Grille pour l'intégration
+    x_values = np.linspace(0, 1, num_points)
+    
+    # Logarithme des valeurs de G(x)
+    log_g_values = np.array([log_G(x, N, s, h) for x in x_values])
+    
+    # Logarithmes pour les intégrales
+    log_numerator = log_sum_exp(log_g_values[x_values <= p])
+    log_denominator = log_sum_exp(log_g_values)
+    
+    # Calcul du ratio en exponentiant
+    return np.exp(log_numerator - log_denominator)
+
+# Paramètres fixes
+N = 1000  # Taille effective de la population
+p = 1 / (2*N)  # Fréquence initiale de la mutation
+
+# Grille de valeurs pour h et s
+h_values = np.linspace(-3, 3, 50)  # Coefficient de dominance
+s_values = np.linspace(-1, 1, 50)  # Avantage sélectif
+
+# Calcul de u(p) pour chaque combinaison de h et s
+H, S = np.meshgrid(h_values, s_values)
+U = np.zeros_like(H)
+
+for i in range(H.shape[0]):
+    for j in range(H.shape[1]):
+        h = H[i, j]
+        s = S[i, j]
+        U[i, j] = u_log(p, N, s, h)
+
+# Tracé 3D
+fig = plt.figure(figsize=(20, 14))
+ax = fig.add_subplot(111, projection='3d')
+
+# Surface
+surf = ax.plot_surface(H, S, U, cmap='viridis', edgecolor='none')
+ax.set_xlabel('h (Coefficient de dominance)', fontsize=19)
+ax.set_ylabel('s (Avantage sélectif)', fontsize=19)
+ax.set_zlabel('u(p)', fontsize=19)
+fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10)
+plt.savefig('/Users/anis/Desktop/3Dplot_dominance_log.png')
+plt.show()
+
+plt.figure(figsize=(10, 8))
+contour = plt.contourf(H, S, U, levels=20, cmap='viridis')
+
+plt.colorbar(contour, label='u(p)')
+plt.xlabel('h (Coefficient de dominance)', fontsize=19)
+plt.ylabel('s (Avantage sélectif)', fontsize=19)
+plt.savefig('/Users/anis/Desktop/3Dplot_dominance2_log.png')
+plt.show()
