@@ -1,0 +1,108 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.integrate import quad
+
+def log_G(x, N, s, h):
+    """
+    Logarithme de la fonction G(x).
+    G(x) = exp(-4Nshx - 2Ns(1-2h)x^2).
+    """
+    return -4 * N * s * h * x - 2 * N * s * (1 - 2 * h) * x**2
+
+def log_sum_exp(log_vals):
+    """
+    Calcul de log-sum-exp pour éviter les underflows/explosions.
+    log-sum-exp = log(sum(exp(log_vals))).
+    """
+    max_log = np.max(log_vals)  # Trouve le maximum des valeurs logarithmiques
+    return max_log + np.log(np.sum(np.exp(log_vals - max_log)))
+
+def u_log(p, N, s, h, num_points=1000):
+    """
+    Calcul de u(p) en utilisant l'échelle logarithmique :
+    u(p) = (intégrale de G(x) de 0 à p) / (intégrale de G(x) de 0 à 1).
+    """
+    # Grille pour l'intégration
+    x_values = np.linspace(0, 1, num_points)
+    
+    # Logarithme des valeurs de G(x)
+    log_g_values = np.array([log_G(x, N, s, h) for x in x_values])
+    
+    # Logarithmes pour les intégrales
+    numerator = log_sum_exp(log_g_values[x_values <= p])
+    denominator = log_sum_exp(log_g_values)
+    
+    # Calcul du ratio en exponentiant
+    return np.exp(numerator - denominator)
+
+# Paramètres fixes
+N = 1000     # Taille effective de la population
+s = 0.05     # Avantage sélectif
+h = -3        # Coefficient de dominance
+p_values = np.linspace(0, 1, 100)  # Valeurs de p entre 0 et 1
+N_values = np.linspace(10, 10000, 200)  # Valeurs de N
+h_values = np.linspace(-3, 3, 100)  # Valeurs de h
+s_values = np.linspace(-0.01, 0.01, 200)  # Valeurs de s
+
+# Calcul de u(p) pour chaque valeur de p
+u_values_p = [u_log(p, N, s, h) for p in p_values]
+
+# Calcul de u(p) pour chaque valeur de N
+u_values_N = [u_log(1/(2*N), N, s, h) for N in N_values]
+
+# Calcul de u(p) pour chaque valeur de h
+u_values_h = [u_log(1/(2*N), N, s, h) for h in h_values]
+
+# Calcul de u(p) pour chaque valeur de s
+u_values_s = [u_log(0.8, N, s, h) for s in s_values]
+u_values_s2 = [u_log(0.8, N, s, h+1) for s in s_values]
+u_values_s3 = [u_log(0.8, N, s, h+2) for s in s_values]
+u_values_s4 = [u_log(0.8, N, s, h+5) for s in s_values]
+u_values_s5 = [u_log(0.8, N, s, h+6) for s in s_values]
+u_values_s6 = [u_log(0.8, N, s, h+7) for s in s_values]
+
+# Tracé de la fonction u(p) pour différentes valeurs de p
+plt.figure(figsize=(8, 6))
+plt.plot(p_values, u_values_p, label=r"$u(p)$", color="blue")
+plt.xlabel(r"$p$ (Fréquence initiale)", fontsize=14)
+plt.ylabel(r"$u(p)$ (Probabilité de fixation)", fontsize=14)
+plt.title(r"Fonction $u(p)$ basée sur $G(x)$", fontsize=16)
+plt.grid()
+plt.legend()
+plt.show()
+
+# Tracé de la fonction u(p) pour différentes valeurs de N
+plt.figure(figsize=(8, 6))
+plt.plot(N_values, u_values_N, label=r"$u(p)$", color="green")
+plt.xlabel(r"$N$ (Taille de population)", fontsize=14)
+plt.ylabel(r"$u(p)$ (Probabilité de fixation)", fontsize=14)
+plt.title(r"Fonction $u(p)$ basée sur $G(x)$ pour différentes tailles $N$", fontsize=16)
+plt.grid()
+plt.legend()
+plt.show()
+
+# Tracé de la fonction u(p) pour différentes valeurs de h
+plt.figure(figsize=(8, 6))
+plt.plot(h_values, u_values_h, label=r"$u(p)$", color="orange")
+plt.xlabel(r"$h$ (Coefficient de dominance)", fontsize=14)
+plt.ylabel(r"$u(p)$ (Probabilité de fixation)", fontsize=14)
+plt.title(r"Fonction $u(p)$ basée sur $G(x)$ pour différentes valeurs de $h$", fontsize=16)
+plt.grid()
+plt.legend()
+plt.show()
+
+# Tracé de la fonction u(p) pour différentes valeurs de s
+#plt.figure(figsize=(8, 6))
+#plt.plot(s_values, u_values_s, label=r"$h=-3$", color="purple")
+#plt.plot(s_values, u_values_s2, label=r"$h=-2$", color="blue")
+#plt.plot(s_values, u_values_s3, label=r"$h=-1$", color="red")
+plt.plot(s_values, u_values_s4, label=r"$u(p), h=2$", color="green")
+plt.plot(s_values, u_values_s5, label=r"$u(p), h=3$", color="grey")
+plt.plot(s_values, u_values_s6, label=r"$u(p), h=4$", color="black")
+
+plt.xlabel(r"$s$ (Avantage sélectif)", fontsize=14)
+plt.ylabel(r"$u(p)$ (Probabilité de fixation)", fontsize=14)
+plt.title(r"", fontsize=16)
+plt.grid()
+plt.legend()
+plt.show()
