@@ -24,17 +24,6 @@ Le code fourni implémente le modèle de Kimura en Python et génère des simula
 
 Le code génère également des tracés 3D et des cartes thermiques pour visualiser la probabilité de fixation en fonction du coefficient de dominance (`h`) et de l'avantage sélectif (`s`).
 
-## Rapport
-
-Le rapport fourni explore les résultats des simulations et discute de l'impact de la dominance sur la probabilité de fixation. Le rapport comprend les sections suivantes :
-
-1. **Introduction** : Présente le concept de dominance en génétique et son rôle dans la diffusion d'un caractère au sein d'une population.
-2. **Modèle de Kimura : Probabilité de fixation d'un gène mutant dans une population** : Présente le modèle de Kimura et explique sa dérivation.
-3. **Application à un cas général de sélection** : Discute de la probabilité de fixation dans le cas d'une dominance intermédiaire et des cas de sur/sous-dominance.
-4. **Conclusion** : Résume les résultats et discute des implications de l'étude.
-5. **Discussion** : Suggère des orientations de recherche futures et discute des limitations de l'étude.
-
-
 # Guide d'Utilisation : Modification des Paramètres
 
 ## Modification des paramètres
