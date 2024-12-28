@@ -6,12 +6,12 @@ Ce projet explore l'impact de la dominance sur la probabilité de fixation d'un 
 
 ## Modèle
 
-Le modèle étudié dans ce projet est le suivant : où :
+Le modèle étudié dans ce projet est le suivant où :
 
-* \( u(p) \) est la probabilité de fixation d'un gène mutant avec une fréquence initiale \( p \).
-* \( G(x) = \exp\left(-\int \frac{2M_{\delta_x}}{V_{\delta_x}} \, dx \right) \)
-* \( M_{\delta_x} \) est le changement moyen de la fréquence du gène dans un intervalle de temps court \( \delta \).
-* \( V_{\delta_x} \) est la variance du changement de la fréquence du gène dans un intervalle de temps court \( \delta \).
+*   u(p) est la probabilité de fixation d'un gène mutant avec une fréquence initiale p.
+*   G(x) = exp(-intégrale de (2M_delta_x / V_delta_x) dx)
+*   M_delta_x est le changement moyen de la fréquence du gène dans un intervalle de temps court delta.
+*   V_delta_x est la variance du changement de la fréquence du gène dans un intervalle de temps court delta.
 
 
 ## Code
