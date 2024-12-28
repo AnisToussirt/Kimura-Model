@@ -63,5 +63,5 @@ p = 0.01  # Fréquence initiale de la mutation
 # Grille de valeurs pour h et s
 h_values = np.linspace(-2, 2, 50)  # Coefficient de dominance
 s_values = np.linspace(-1, 1, 50)  # Avantage sélectif
-
+```
 Après avoir modifié les paramètres, enregistrez le fichier et exécutez le script pour générer les tracés avec les nouvelles valeurs.
